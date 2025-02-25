@@ -1,5 +1,6 @@
 ### ShopSmart AI
 Your ultimate companion in the world of online shopping
+[watch demo](https://drive.google.com/file/d/1WvpcpcA6GWa7IYqZzCoA34UCctQsKBld/view?usp=drive_link)
 
 ## About ShopSmart AI
 ShopSmart AI is a powerful AI-driven shopping assistant designed to revolutionize your online shopping experience. With advanced capabilities, ShopSmart AI helps you save time, money, and effort while finding the perfect product tailored to your needs.
