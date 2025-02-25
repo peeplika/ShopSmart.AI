@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>ShopSmart</title>
+        <link rel="stylesheet" href="style4.css">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    </head>
+    <body>
+        <div class="header">
+            <div>
+                <h1 style="padding-left:37px; padding-top:20px; margin-bottom:0; font-size: 22px;">ShopSmart</h1>
+                <p style="padding-left:35px; padding-top:0; margin-top:0; font-size: 12px;">Powered by AI</p>
+            </div>
+            <div>
+                <img class="profile" src="images/profile.png">
+            </div>
+        </div>
+        <h1 class="para">Choose Your Style Whats Your Type?</h1>
+        <main class="container1"id="textbox">
+            <div class="container2" >
+                <div style="display: flex; flex-direction: row;">
+                    <button class="lens"><img src="images/lens.png"></button>
+                    <input class="message" id="searchQuery" type="text" placeholder="Shop like a Pro">
+                </div>
+                <div>
+                    <button class="search" onclick="searchProducts()"><img src="images/search.jpeg"></button>
+                </div>
+            </div>
+        </main>
+        <div id="text"></div>
+        <div class="product-container" id="productResults"></div>
+<script>
+
+    async function searchProducts() {
+        const heading = document.querySelector(".para"); // Selects the first element with class "para"
+        heading.style.visibility = "hidden";
+
+        const textbox = document.getElementById("textbox"); // Selects the element with id "textbox"
+        textbox.style.position = "fixed";
+        textbox.style.bottom = "10px";
+
+        const text_element = document.getElementById("text");
+        text_element.className = "ai-response";
+        text_element.innerHTML = '<div class="loading-dots"><span></span><span></span><span></span></div>'
+        const query = document.getElementById('searchQuery').value;
+        document.getElementById('searchQuery').value = "";
+        // const user_query = Document.createElement("div");
+        // user_query.innerHTML = `<p>${query}</p>`
+        // text_element.appendChild(user_query)
+        if (!query) return alert("Please enter a search query");
+        
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/search?query=${encodeURIComponent(query)}`);
+            const data = await response.json();
+            console.log(data);
+
+            const resultsContainer = document.getElementById('productResults');
+            
+            text_element.innerHTML = `<p>Here is what I found: </p>`;
+
+            if (data.products && data.products.length > 0) {
+                data.products.forEach(product => {
+                    const card = document.createElement('div');
+                    card.className = 'product-card';
+                    card.innerHTML = `
+            <img src="${product.image}" alt="${product.title}" class="product-image">
+            <div class="product-info">
+                <h4 class="title">${product.title}</h4>
+                <p class="price">${product.price || 'Price not available'} 
+                    ${product.old_price ? `<span class="old-price">${product.old_price}</span>` : ""}
+                </p>
+                <p class="store">Store: ${product.store}</p>
+                <p class="rating">⭐ ${product.rating} (${product.reviews} reviews)</p>
+                ${product.discount ? `<span class="discount">${product.discount}</span><br>` : ""}
+                ${product.delivery ? `<span class="delivery">${product.delivery}</span>` : ""}
+                <a href="${product.link}" target="_blank" class="buy-button">View Product</a>
+            </div>
+        `;
+                    resultsContainer.appendChild(card);
+                });
+            } else {
+                resultsContainer.innerHTML = "<p>No products found.</p>";
+            }
+
+            // Create container for AI response
+            const llmContainer = document.createElement('div');
+            llmContainer.className = "ai_response";
+            llmContainer.style.margin = "60px 60px 200px 60px";
+            
+            
+            // Add loading indicator first
+           
+            resultsContainer.appendChild(llmContainer);
+
+            // Wait a moment to show loading
+            await new Promise(resolve => setTimeout(resolve, 1500));
+
+            // Then start typing the response
+            text = data.llm_response;
+            typeText(llmContainer, text);
+
+        } catch (error) {
+            alert("Error fetching data: " + error);
+            console.error(error);
+        }
+    }
+
+    async function typeText(container, text, delay = 20) {
+        container.innerHTML = '<div class="ai-response"></div>';
+        const textContainer = container.querySelector('.ai-response');
+        
+        textContainer.innerHTML = 'AI advice: ';  // Keep the prefix
+        const cursor = document.createElement('span');
+        textContainer.appendChild(cursor);
+
+        for (let char of text) {
+            cursor.insertAdjacentText('beforebegin', char);
+            await new Promise(resolve => setTimeout(resolve, delay));
+        }
+        cursor.remove();
+    }
+</script>
+     
+    </body>
+</html>
