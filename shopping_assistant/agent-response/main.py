@@ -3,7 +3,6 @@ import requests
 import openai
 from openai import OpenAI
 from fastapi.middleware.cors import CORSMiddleware
-import json
 from serpapi import GoogleSearch
 import os
 
@@ -27,7 +26,7 @@ def product_query(client, query: str) -> str:
     prompt = f"Take this query and return the product name that the user wants buy {query}, return only the product name"
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
-        messages=[{"role": "system", "content": "You are an AI assistant finding out the product the user wants to buy"},
+        messages=[{"role": "system", "content": "You are an AI shoping assistant finding out the product the user wants to buy"},
                   {"role": "user", "content": prompt}]
     )
     return response.choices[0].message.content
@@ -44,7 +43,7 @@ def search_google_shopping(query: str = Query(..., title="Search Query")):
     "q": p_query,
     "hl": "en",
     "gl": "us",
-    "api_key": "b8e7401f578858e7e6188a5f9ed202b2c0d1e35f8ee439758d8c1e89ac1957cc",
+    "api_key": SERPAPI_KEY,
     "num": 10,
     }
     search = GoogleSearch(params)
