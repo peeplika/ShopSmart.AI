@@ -20,7 +20,6 @@ app.add_middleware(
 
 SERPAPI_KEY = os.environ.get("SERPAPI_KEY") 
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
-openai.api_key = OPENAI_API_KEY
 
 def product_query(client, query: str) -> str:
     prompt = f"Take this query and return the product name that the user wants buy {query}, return only the product name"
@@ -37,7 +36,7 @@ def search_google_shopping(query: str = Query(..., title="Search Query")):
     client = OpenAI(api_key=OPENAI_API_KEY)
     
     p_query = product_query(client, query)
-    print(p_query, "<----------------------------- p_query")
+    print(p_query)
     params = {
     "engine": "google_shopping",
     "q": p_query,
